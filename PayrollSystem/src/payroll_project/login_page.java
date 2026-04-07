@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.sql.*;
 
-public class login_page extends JFrame implements ActionListener{
+public class login_page extends JFrame{
     JLabel l1,l2,l3,l4 ;
     JButton bt1, bt2;
     JTextField tf;
@@ -14,66 +14,134 @@ public class login_page extends JFrame implements ActionListener{
     Font f;
     
     login_page(){
-    super ("Payroll Login");
-    setSize (450,200);
-    setLocation(500,250);
-    setResizable (false);
-    
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
-    
-    //setUndecorated(true);
-    f = new Font("arial", Font.BOLD,14);
-    l1 = new JLabel("Username");
-    l2 = new JLabel("Password");
-    
-    l1.setFont(f);
-    l2.setFont(f);
-    
-    tf = new JTextField();
-    pf = new JPasswordField();
-    
-    tf.setFont(f);
-    pf.setFont(f);
-    
-    bt1 = new JButton ("Login");
-    bt2 = new JButton ("Cancel");
-    bt1.setBackground(Color.BLACK);
-    bt1.setForeground(Color.WHITE);
-    bt2.setBackground(Color.BLACK);
-    bt2.setForeground(Color.WHITE);
-    
-    bt1.addActionListener(this);
-    bt2.addActionListener(this);
-    bt1.setFont(f);
-    bt2.setFont(f);
-    
-    p1 = new JPanel();
-    p1.setLayout(new GridLayout(3,2,10,10));
-    
-    p1.add(l1);
-    p1.add(tf);
-    p1.add(l2);
-    p1.add(pf);
-    p1.add(bt1);
-    p1.add(bt2);
-    
-    ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("payroll_project/icons/login.png"));
-    Image image = img.getImage().getScaledInstance(120,120,Image.SCALE_DEFAULT);
-    ImageIcon img1 = new ImageIcon(image);
-    l3 = new JLabel(img1);
-    
-    setLayout(new BorderLayout(20,20));
-    
-    add(l3,BorderLayout.WEST);
-    add(p1,BorderLayout.CENTER);
-    
-    p1.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
-    l3.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
-    getRootPane().setDefaultButton(bt1);
-    
-   }
-    public void actionPerformed(ActionEvent e){
+        super("Payroll Login");
+
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // ===== BACKGROUND IMAGE =====
+        ImageIcon bgImg = new ImageIcon(
+            ClassLoader.getSystemResource("payroll_project/icons/earth.jpg")
+        );
+        Image img = bgImg.getImage().getScaledInstance(
+            Toolkit.getDefaultToolkit().getScreenSize().width,
+            Toolkit.getDefaultToolkit().getScreenSize().height,
+            Image.SCALE_SMOOTH
+        );
+        JLabel background = new JLabel(new ImageIcon(img));
+        background.setLayout(new GridBagLayout()); // center content
+
+        // ===== LOGIN PANEL =====
+        JLabel title = new JLabel("Payroll System", JLabel.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 20));
+        title.setForeground(new Color(50,50,50));
+        title.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
+        JPanel loginPanel = new JPanel();
+        loginPanel.setPreferredSize(new Dimension(380,260));
+        loginPanel.setBackground(new Color(255,255,255,240)); // semi-transparent
+        loginPanel.setLayout(new GridBagLayout());
+        loginPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200,200,200), 2),
+                BorderFactory.createEmptyBorder(20,20,20,20)
+        ));
+
+        Font f = new Font("Arial", Font.BOLD, 14);
+
+        JLabel l1 = new JLabel("Username");
+        JLabel l2 = new JLabel("Password");
+
+        tf = new JTextField();
+        pf = new JPasswordField();
+        
+        tf.setPreferredSize(new Dimension(150,30));
+        pf.setPreferredSize(new Dimension(150,30));
+
+        l1.setFont(f);
+        l2.setFont(f);
+        tf.setFont(f);
+        pf.setFont(f);
+
+        bt1 = new JButton("Login");
+        bt2 = new JButton("Cancel");
+        
+        bt1.setPreferredSize(new Dimension(120,35));
+        bt2.setPreferredSize(new Dimension(120,35));
+        
+        bt1.setBackground(new Color(0,153,76));   // darker green
+        bt2.setBackground(new Color(204,0,0));    // softer red
+
+        bt1.setFocusPainted(false);
+        bt2.setFocusPainted(false);
+
+        // ===== ADD COMPONENTS =====
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10,10,10,10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Title
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        loginPanel.add(title, gbc);
+
+        // Username
+        gbc.gridwidth = 1;
+        gbc.gridx = 0; gbc.gridy = 1;
+        loginPanel.add(l1, gbc);
+
+        gbc.gridx = 1;
+        loginPanel.add(tf, gbc);
+
+        // Password
+        gbc.gridx = 0; gbc.gridy = 2;
+        loginPanel.add(l2, gbc);
+
+        gbc.gridx = 1;
+        loginPanel.add(pf, gbc);
+
+        // Buttons
+        gbc.gridx = 0; gbc.gridy = 3;
+        loginPanel.add(bt1, gbc);
+
+        gbc.gridx = 1;
+        loginPanel.add(bt2, gbc);
+
+        // ===== CENTER PANEL =====
+        background.add(loginPanel);
+
+        add(background);
+
+        // ===== ACTIONS =====
+        bt1.addActionListener(e -> {
+            String u_name = tf.getText();
+            String p_name = new String(pf.getPassword());
+
+            try{
+                ConnectionClass obj = new ConnectionClass();
+
+                String q = "select * from login where username='"+u_name+"' and password='"+p_name+"'";
+                ResultSet res = obj.stmt.executeQuery(q);
+
+                if(res.next()){
+                    new home_payroll().setVisible(true);
+                    setVisible(false);
+                } else {
+                    JOptionPane.showMessageDialog(null,"Invalid username or password");
+                }
+
+            } catch(Exception ex){
+                ex.printStackTrace();
+            }
+        });
+
+        bt2.addActionListener(e -> {
+            int choice = JOptionPane.showConfirmDialog(null,"Exit?");
+            if(choice == JOptionPane.YES_OPTION){
+                System.exit(0);
+            }
+        });
+
+        getRootPane().setDefaultButton(bt1);
+    }
+    /*public void actionPerformed(ActionEvent e){
         if(e.getSource() == bt1)
         {
             String u_name = tf.getText();
@@ -105,7 +173,7 @@ public class login_page extends JFrame implements ActionListener{
                 System.exit(0);
             }
         }
-    }
+    }*/
     public static void main(String args[]){
         new login_page().setVisible(true);
     }
