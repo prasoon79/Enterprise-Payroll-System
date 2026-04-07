@@ -79,6 +79,28 @@ The system calculates tax based on predefined salary slabs and computes net sala
 
 ---
 
+## 📸 Screenshots
+
+### 🔐 Login Page
+![Login](images/login.png)
+
+### 🏠 Dashboard
+![Dashboard](images/dashboard.png)
+
+### 👤 Employee Form
+![Employee](images/employee_form.png)
+
+### 📋 Data Table
+![Table](images/table.png)
+
+### 📄 Payslip
+![Payslip](images/payslip.png)
+
+### 🖨️ PDF Payslip
+![PDF](images/pdf_payslip.png)
+
+---
+
 ## 👨‍💻 Team Members
 
 * **Prasoon Saraswat**
